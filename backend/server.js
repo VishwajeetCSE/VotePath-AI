@@ -18,6 +18,8 @@ app.post("/chat", async (req, res) => {
   }, 1000);
 });
 
+const path = require("path");
+
 function generateResponse(msg) {
   msg = msg.toLowerCase();
 
@@ -40,5 +42,10 @@ function generateResponse(msg) {
   return `I can help you with:\n- Voter registration\n- Lost voter ID\n- Polling booth info\n\nTry asking: "I lost my voter ID"`;
 }
 
-const PORT = process.env.PORT || 5000;
+// Simple health check route so you can test if the backend is live
+app.get("/", (req, res) => {
+  res.send("VotePath AI Backend is running successfully!");
+});
+
+const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => console.log(`VotePath AI Server running on port ${PORT}`));

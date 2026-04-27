@@ -28,7 +28,8 @@ export default function Assistant() {
     setIsTyping(true);
 
     try {
-      const res = await axios.post("http://localhost:5000/chat", {
+      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const res = await axios.post(`${apiUrl}/chat`, {
         message: textToSend,
       });
 
