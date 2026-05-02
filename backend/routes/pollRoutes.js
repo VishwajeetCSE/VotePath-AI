@@ -16,6 +16,9 @@ const voteLimiter = rateLimit({
 // Validation Middleware
 const validateVoteInput = [
   body('partyId').isString().trim().notEmpty().withMessage('Party selection is required.'),
+  body('name').isString().trim().notEmpty().withMessage('Name is required.'),
+  body('mobile').isString().trim().notEmpty().withMessage('Mobile number is required.'),
+  body('age').isInt({ min: 18 }).withMessage('You must be at least 18 years old to vote.'),
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -27,6 +30,6 @@ const validateVoteInput = [
 
 router.get('/standings', pollController.getPollResults);
 router.get('/candidates', pollController.getCandidates);
-router.post('/vote', requireAuth, voteLimiter, validateVoteInput, pollController.submitVote);
+router.post('/vote', voteLimiter, validateVoteInput, pollController.submitVote);
 
 module.exports = router;

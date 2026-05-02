@@ -32,25 +32,21 @@ exports.getPollResults = async (req, res, next) => {
 
 exports.submitVote = async (req, res, next) => {
   try {
-    const { partyId, state } = req.body;
+    const { partyId, state, name, mobile, age } = req.body;
     
-    if (!req.user) {
-      return res.status(401).json({ success: false, message: 'Unauthorized. Please login with Google.' });
-    }
-
-    const userId = req.user.id;
-    
-    // Check if user already voted based on Google User ID
+    // Check if user already voted based on mobile number
     const votesSnapshot = await db.collection('votes').get();
-    const hasVoted = votesSnapshot.docs.some(doc => doc.data().userId === userId);
+    const hasVoted = votesSnapshot.docs.some(doc => doc.data().mobile === mobile);
     
     if (hasVoted) {
-      return res.status(429).json({ success: false, message: 'You have already cast your vote.' });
+      return res.status(429).json({ success: false, message: 'This mobile number has already cast a vote.' });
     }
 
     // Record the vote
     await db.collection('votes').add({
-      userId: userId,
+      name: xss(name),
+      mobile: xss(mobile),
+      age: parseInt(age, 10),
       partyId: xss(partyId),
       state: xss(state || 'Unknown'),
       timestamp: new Date().toISOString()

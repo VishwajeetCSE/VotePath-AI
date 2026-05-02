@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import axios from 'axios';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import { Info, AlertTriangle, TrendingUp, LogIn, MapPin } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
+import { Info, AlertTriangle, TrendingUp, MapPin, User, Phone, Calendar } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 
 export default function Poll() {
@@ -10,6 +9,9 @@ export default function Poll() {
   const [totalVotes, setTotalVotes] = useState(0);
   const [selectedParty, setSelectedParty] = useState('');
   const [selectedState, setSelectedState] = useState('');
+  const [voterName, setVoterName] = useState('');
+  const [voterMobile, setVoterMobile] = useState('');
+  const [voterAge, setVoterAge] = useState('');
   
   const INDIAN_STATES = [
     "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", "Gujarat", "Haryana", 
@@ -20,7 +22,6 @@ export default function Poll() {
   const [status, setStatus] = useState('idle'); // idle, loading, success, error
   const [message, setMessage] = useState('');
   
-  const { user } = useAuth();
   const location = useLocation();
 
   // Fetch initial standings
@@ -46,18 +47,17 @@ export default function Poll() {
 
   const handleVote = async (e) => {
     e.preventDefault();
-    if (!selectedParty || !user) return;
+    if (!selectedParty || !voterName || !voterMobile || !voterAge || !selectedState) return;
 
     setStatus('loading');
     try {
       const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8080";
       const res = await axios.post(`${apiUrl}/api/polls/vote`, {
         partyId: selectedParty,
-        state: selectedState || 'Unknown',
-      }, {
-        headers: {
-          Authorization: `Bearer ${user.token}`
-        }
+        state: selectedState,
+        name: voterName,
+        mobile: voterMobile,
+        age: voterAge,
       });
       
       setStatus('success');
@@ -144,8 +144,42 @@ export default function Poll() {
             </div>
           ) : (
             <form onSubmit={handleVote} className="space-y-4">
-              <div className="space-y-4 mb-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div className="relative col-span-1 md:col-span-2">
+                  <User className="absolute left-3 top-3.5 w-5 h-5 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Your Full Name"
+                    value={voterName}
+                    onChange={(e) => setVoterName(e.target.value)}
+                    className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none transition-colors"
+                    required
+                  />
+                </div>
                 <div className="relative">
+                  <Phone className="absolute left-3 top-3.5 w-5 h-5 text-gray-400" />
+                  <input
+                    type="tel"
+                    placeholder="Mobile Number"
+                    value={voterMobile}
+                    onChange={(e) => setVoterMobile(e.target.value)}
+                    className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none transition-colors"
+                    required
+                  />
+                </div>
+                <div className="relative">
+                  <Calendar className="absolute left-3 top-3.5 w-5 h-5 text-gray-400" />
+                  <input
+                    type="number"
+                    placeholder="Age (18+)"
+                    min="18"
+                    value={voterAge}
+                    onChange={(e) => setVoterAge(e.target.value)}
+                    className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none transition-colors"
+                    required
+                  />
+                </div>
+                <div className="relative col-span-1 md:col-span-2">
                   <MapPin className="absolute left-3 top-3.5 w-5 h-5 text-gray-400" />
                   <select
                     value={selectedState}
@@ -193,30 +227,19 @@ export default function Poll() {
                 </div>
               )}
 
-              {user ? (
                 <button
                   type="submit"
-                  disabled={!selectedParty || !selectedState || status === 'loading'}
+                  disabled={!selectedParty || !voterName || !voterMobile || !voterAge || !selectedState || status === 'loading'}
                   className="w-full bg-indigo-600 text-white font-bold py-4 rounded-xl hover:bg-indigo-700 transition-colors focus-visible:ring-4 focus-visible:ring-indigo-300 outline-none disabled:opacity-50 disabled:cursor-not-allowed mt-4"
                 >
                   {status === 'loading' ? 'Submitting securely...' : 'Submit Secure Vote'}
                 </button>
-              ) : (
-                <Link
-                  to="/login"
-                  state={{ from: location }}
-                  className="w-full flex items-center justify-center gap-2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-bold py-4 rounded-xl hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors mt-4"
-                >
-                  <LogIn className="w-5 h-5" />
-                  Sign in with Google to Vote
-                </Link>
-              )}
             </form>
           )}
           
           <div className="mt-6 flex items-start gap-3 text-xs text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/50 p-4 rounded-lg">
             <Info className="w-4 h-4 shrink-0 mt-0.5 text-blue-500" />
-            <p>Your vote is entirely anonymous but strictly limited to one per verified Google account to prevent bot manipulation.</p>
+            <p>Your vote is securely recorded. It is limited to one per mobile number to prevent duplicate voting.</p>
           </div>
         </section>
 
