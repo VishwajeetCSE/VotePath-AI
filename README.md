@@ -91,6 +91,10 @@ VotePath AI is fully deployed on **Google Cloud Run** (`us-central1`).
 ## 📸 Demo
 *(Judges: Please visit our live URL to test the interactive features!)*
 
+## 🎥 Demo Reel
+Watch here:
+https://www.instagram.com/reel/DXyqOQAhYp_/
+
 - **Home Page:** Features our 3-step "How it works" guide and a live aggregate widget.
 - **Poll Flow:** Users vote, verify via mobile, and instantly receive an AI Insight Card.
 - **Assistant:** Ask any election question and receive formatted, highlighted answers.
