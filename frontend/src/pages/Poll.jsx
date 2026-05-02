@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import axios from 'axios';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import { Info, AlertTriangle, TrendingUp, MapPin, User, Phone, Calendar } from 'lucide-react';
+import { Info, AlertTriangle, TrendingUp, MapPin, User, Phone, Calendar, Bot, CheckCircle2 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 
 export default function Poll() {
@@ -139,8 +139,25 @@ export default function Poll() {
           </h2>
 
           {status === 'success' ? (
-            <div className="bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-xl p-6 text-center animate-fade-in-up" role="alert">
-              <p className="text-green-800 dark:text-green-300 font-medium text-lg">{message}</p>
+            <div className="bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-xl p-6 animate-fade-in-up" role="alert">
+              <div className="flex flex-col items-center justify-center text-center mb-6">
+                <CheckCircle2 className="w-12 h-12 text-green-500 mb-2" />
+                <h3 className="text-xl font-bold text-green-800 dark:text-green-300">Vote Successfully Cast!</h3>
+                <p className="text-green-700 dark:text-green-400 mt-1">{message}</p>
+              </div>
+              
+              <div className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-green-100 dark:border-green-800">
+                <h4 className="font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-2">
+                  <Bot className="w-5 h-5 text-blue-500" />
+                  AI Insight
+                </h4>
+                <p className="text-sm text-gray-600 dark:text-gray-300">
+                  Based on your vote for <strong>{standings.find(p => p.id === selectedParty)?.name}</strong> from <strong>{selectedState}</strong>, we recommend exploring our step-by-step guidance to ensure your Voter ID is officially registered before the main election day.
+                </p>
+                <Link to="/journey" className="mt-4 inline-block bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-semibold px-4 py-2 rounded-lg text-sm hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors">
+                  Explore Guidance →
+                </Link>
+              </div>
             </div>
           ) : (
             <form onSubmit={handleVote} className="space-y-4">

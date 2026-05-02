@@ -1,100 +1,106 @@
 # VotePath AI 🇮🇳🗳️
 
-VotePath AI is a highly optimized, full-stack, AI-powered election assistant designed to help Indian voters navigate the electoral process with ease. From new voter registration to finding polling booths and downloading e-EPIC cards, VotePath AI provides immediate, actionable, and friendly guidance.
+## 📖 Project Overview
+VotePath AI is a highly optimized, full-stack smart election assistant designed specifically to help Indian voters navigate the electoral process with absolute ease. Whether it's finding polling booths, understanding ID requirements, or gauging public sentiment, VotePath AI provides immediate, localized, AI-driven guidance. By combining an interactive live public poll with a conversational AI agent, VotePath simplifies the traditionally complex voting bureaucracy into an engaging, 3-step digital journey.
 
-This project was built to achieve **100% Elite Code Standards**, featuring enterprise-grade security, extreme efficiency, full accessibility (a11y), comprehensive automated testing, and deep Google Services integration.
+## ❗ Problem & Motivation
+**The Problem:** Millions of eligible Indian voters—especially first-time voters, senior citizens, and inter-state migrants—often face immense confusion regarding voter registration, polling booth locations, document validity, and candidate platforms. Reading through long, static PDF documents from official Election Commission portals is tedious and often overwhelming.
 
-## ✨ Key Features & Architectural Highlights
+**Our Solution:** VotePath AI replaces static web pages with an intelligent, dynamic interface. Instead of searching through dense menus, users can simply state their problem to the AI Assistant for an immediate, step-by-step resolution. Furthermore, our live poll feature captures real-time democratic sentiment, making voters feel actively engaged in the electoral process before they even reach the ballot box.
 
-### 🔒 Enterprise Security
-- **Express-Rate-Limit**: Brute-force and API abuse protection (max 100 requests / 15 mins).
-- **Helmet HTTP Hardening**: Strict HTTP response headers to defend against common web vulnerabilities.
-- **XSS Sanitization**: `xss` library prevents cross-site scripting through user input.
-- **Strict CORS**: Cross-Origin Resource Sharing strictly locked down to local environments and trusted production domains.
-- **Express-Validator**: Strong input schema validation and type-checking on all backend routes.
-
-### ⚡ Extreme Efficiency
-- **React.lazy & Suspense**: Asynchronous code-splitting ensures the browser only downloads the page the user is currently viewing.
-- **Hook Optimization**: Extensive use of `useMemo` and `useCallback` to completely eliminate unnecessary React re-renders.
-- **Backend Memory Caching**: Utilizing `node-cache` to instantly serve identical AI queries (TTL 5 mins), saving Gemini API quotas and reducing latency to 0ms.
-
-### ♿ Accessibility (A11y)
-- **ARIA Live Regions**: Screen-reader friendly chat updates via `aria-live="polite"`.
-- **Keyboard Navigation**: Complete keyboard navigability with customized, high-contrast Tailwind `focus-visible` rings on all interactive elements.
-- **Semantic HTML5**: Strict adherence to `<main>`, `<header>`, `<nav>`, and structural roles.
-
-### 🤖 Google Services & AI
-- **Gemini 2.5 Flash API**: Context-aware AI routing through `@google/genai`.
-- **Safety Filters**: Strict Google AI safety thresholds activated (Harassment, Hate Speech, Dangerous Content blocking).
-- **Google Analytics (GA4)**: Frontend integration for user behavior tracking.
-- **Cloud Run Ready**: Containerized backend via a streamlined `Dockerfile`, listening automatically on `process.env.PORT`.
-
-### 🧪 Automated Testing
-- **Backend**: >80% test coverage using `Jest` and `Supertest`, featuring fully mocked AI service calls.
-- **Frontend**: Full DOM and interaction testing using `Vitest`, `@testing-library/react`, and `jsdom`.
-
----
+## ✨ Key Features
+- **Smart Voter Poll:** A responsive, live polling system that captures public sentiment, validates users securely via mobile number to prevent duplicate votes, and renders state-wise data visualizations using Recharts.
+- **AI Election Assistant:** Powered by Google's Gemini 2.5 Flash API, the assistant explains complex electoral processes in simple, conversational language.
+- **Scenario-Based Journeys:** Tailored, interactive roadmaps that guide specific user personas (e.g., first-time voter, out-of-state migrant, lost Voter ID) to their exact resolution in seconds.
+- **AI Insight Cards:** Immediately upon voting, users receive an AI-generated insight card with personalized recommendations based on their regional selection.
+- **Admin Dashboard:** A secure administrative portal to analyze aggregate anonymized feedback and system health.
+- **Highly Scalable Backend:** Deployed dynamically on Google Cloud Run with `node-cache` integration to reduce API latency to 0ms for frequent queries.
 
 ## 💻 Tech Stack
+- **Frontend:** React 18, Vite, Tailwind CSS (with complete Glassmorphism & Dark Mode support), Recharts for data visualization, Lucide-React for iconography.
+- **Backend:** Node.js, Express, `@google/genai` for LLM routing, `express-rate-limit` for DDoS protection, `xss` for input sanitization.
+- **Infrastructure:** Google Cloud Run (Containerized Deployment).
+- **Data Persistence:** Mock Firebase SDK / JSON file storage (configured for easy migration to Cloud Firestore).
 
-- **Frontend**: React 18, Vite, Tailwind CSS, Framer Motion (Native Tailwind animations), Axios, Lucide React, React-Markdown.
-- **Backend**: Node.js, Express, @google/genai, Express-Validator, Helmet, Node-Cache.
-- **Testing**: Jest, Supertest, Vitest, Testing-Library.
+## 🏗️ Architecture
 
----
+```text
+  [ User Device ] 
+        │
+   (HTTPS / JSON)
+        │
+        ▼
+[ Frontend (React/Vite) ]  <──► [ Live Poll Charts / AI Chat Interface ]
+        │
+   (REST API)
+        │
+        ▼
+[ Backend (Node/Express) ] <──► [ In-Memory Cache (node-cache) ]
+        │
+  (Containerized)
+        │
+   ┌────┴─────────────────────────────┐
+   ▼                                  ▼
+[ Google Cloud Run ]           [ Gemini 2.5 API ]
+   │                                  │
+   ▼                                  ▼
+[ Mock Firestore / DB ]        [ Contextual Responses ]
+```
+**Component Breakdown:**
+- **Frontend:** Hosted securely, providing a fast, accessible (WCAG AAA) UI with minimal re-renders using React hooks.
+- **Backend:** Handles business logic, limits API abuse via rate-limiting, and securely sanitizes inputs.
+- **Cache & LLM:** Checks `node-cache` for identical queries to save costs; if un-cached, securely queries Google Gemini for election data.
 
-## 🚀 Installation & Local Development
+## 🚀 Setup Instructions
 
-### Prerequisites
-- Node.js (v18 or higher recommended)
-- A Google Gemini API Key
+Clone the repository and set up your environment variables:
 
-### 1. Clone the repository
 ```bash
+# 1. Clone the repository
 git clone https://github.com/VishwajeetCSE/VotePath-AI.git
 cd VotePath-AI
+
+# 2. Setup the Backend
+cd backend
+cp .env.example .env
+# Edit .env and add your GEMINI_API_KEY
+npm install
+npm run dev
+
+# 3. Setup the Frontend (in a new terminal)
+cd ../frontend
+npm install
+npm run dev
 ```
 
-### 2. Setup the Backend
-Open a terminal and navigate to the backend directory:
+To run using Docker (similar to Cloud Run):
 ```bash
 cd backend
-npm install
-```
-Create a `.env` file inside the `/backend` folder with the following:
-```env
-PORT=8080
-GEMINI_API_KEY=your_gemini_api_key_here
-FRONTEND_URL=http://localhost:5173
-```
-Start the backend server:
-```bash
-npm run dev
+docker build -t votepath-backend .
+docker run -p 8080:8080 votepath-backend
 ```
 
-### 3. Setup the Frontend
-Open a new, separate terminal and navigate to the frontend directory:
-```bash
-cd frontend
-npm install
-```
-Start the frontend Vite server:
-```bash
-npm run dev
-```
+## ☁️ Deployment Details
+VotePath AI is fully deployed on **Google Cloud Run** (`us-central1`). 
+- The backend and frontend are containerized dynamically using Google Cloud Buildpacks directly from the source code.
+- We utilize Cloud Run's managed HTTPS to ensure all data and voting submissions are transmitted securely.
+- Cross-Origin Resource Sharing (CORS) is strictly configured to only accept requests from our verified live domain.
 
-### 4. View the Application
-Open your browser and navigate to `http://localhost:5173`.
+🔗 **Live URL:** [https://votepath-frontend-224296733729.us-central1.run.app/](https://votepath-frontend-224296733729.us-central1.run.app/)
 
----
+## 📸 Demo
+*(Judges: Please visit our live URL to test the interactive features!)*
 
-## 📋 Available Scripts
+- **Home Page:** Features our 3-step "How it works" guide and a live aggregate widget.
+- **Poll Flow:** Users vote, verify via mobile, and instantly receive an AI Insight Card.
+- **Assistant:** Ask any election question and receive formatted, highlighted answers.
 
-**Backend (`/backend`)**
-- `npm run dev`: Starts the backend server in development mode.
-- `npm test`: Runs the Jest test suite with AI mocks.
+## 🛣️ Roadmap / Future Work
+- **Multilingual Support:** Integrating native language translation to support Hindi, Marathi, Bengali, and Tamil natively via the AI.
+- **Official Integration:** Fetching live data directly from the official Election Commission (ECI) APIs.
+- **WhatsApp Bot:** Porting the conversational assistant to a WhatsApp Business number for even greater rural accessibility.
+- **Policymaker Analytics:** Expanding the Admin Dashboard to visualize demographic awareness gaps for NGO targeting.
 
-**Frontend (`/frontend`)**
-- `npm run dev`: Starts the Vite development server.
-- `npm run build`: Builds the app for production deployment.
-- `npm test`: Runs the Vitest test suite.
+## 📄 Credits & License
+- **Developed by:** Vishwajeet
+- **License:** MIT License. Free to use, modify, and distribute. We believe democratic technology should be open-source.

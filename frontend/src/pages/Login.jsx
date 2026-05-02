@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { GoogleLogin } from '@react-oauth/google';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { ShieldCheck, UserCog, Lock } from 'lucide-react';
-import { jwtDecode } from 'jwt-decode';
+import { ShieldCheck, UserCog, Lock, User } from 'lucide-react';
 import axios from 'axios';
 
 export default function Login() {
@@ -16,23 +15,22 @@ export default function Login() {
   const [adminPassword, setAdminPassword] = useState('');
   const [adminError, setAdminError] = useState('');
 
-  const handleGoogleSuccess = (credentialResponse) => {
-    try {
-      const decoded = jwtDecode(credentialResponse.credential);
-      const userData = {
-        id: decoded.sub,
-        name: decoded.name,
-        email: decoded.email,
-        picture: decoded.picture,
-        token: credentialResponse.credential, 
-        role: 'voter'
-      };
-      login(userData);
-      const from = location.state?.from?.pathname || "/dashboard";
-      navigate(from, { replace: true });
-    } catch (error) {
-      console.error("Login failed parsing token", error);
-    }
+  const [testUsername, setTestUsername] = useState('');
+  const [testPassword, setTestPassword] = useState('');
+
+  const handleTestLogin = (e) => {
+    e.preventDefault();
+    const userData = {
+      id: 'test_user_' + Date.now(),
+      name: testUsername || 'Test User',
+      email: 'test@votepath.ai',
+      picture: `https://ui-avatars.com/api/?name=${testUsername || 'Test+User'}&background=random`,
+      token: 'dummy_testing_token', 
+      role: 'voter'
+    };
+    login(userData);
+    const from = location.state?.from?.pathname || "/dashboard";
+    navigate(from, { replace: true });
   };
 
   const handleAdminLogin = async (e) => {
@@ -81,23 +79,46 @@ export default function Login() {
             </div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Secure Authentication</h1>
             <p className="text-gray-600 dark:text-gray-300 mb-8 text-sm">
-              Verify your identity with Google to participate in live polls and leave feedback.
+              Use any test credentials to access the user dashboard. (Google Login is optional and currently disabled for testing).
             </p>
 
-            <div className="flex justify-center mb-6">
-              <GoogleLogin
-                onSuccess={handleGoogleSuccess}
-                onError={() => console.log('Login Failed')}
-                shape="pill"
-                theme="filled_blue"
-                size="large"
-                text="continue_with"
-              />
-            </div>
-            
-            <div className="bg-blue-50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300 p-3 rounded-lg text-xs text-left mb-4">
-              <strong>Note:</strong> If you see an "Access blocked: Authorization Error", you need to replace the default Google Client ID in <code>App.jsx</code> with your own from the Google Cloud Console.
-            </div>
+            <form onSubmit={handleTestLogin} className="space-y-4 text-left">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Username / Name</label>
+                <div className="relative">
+                  <input 
+                    type="text" 
+                    value={testUsername}
+                    onChange={(e) => setTestUsername(e.target.value)}
+                    className="w-full p-3 pl-10 border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus-visible:ring-2 focus-visible:ring-indigo-500 outline-none"
+                    placeholder="testuser"
+                    required
+                  />
+                  <User className="w-5 h-5 text-gray-400 absolute left-3 top-3.5" />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Password</label>
+                <div className="relative">
+                  <input 
+                    type="password" 
+                    value={testPassword}
+                    onChange={(e) => setTestPassword(e.target.value)}
+                    className="w-full p-3 pl-10 border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus-visible:ring-2 focus-visible:ring-indigo-500 outline-none"
+                    placeholder="••••••••"
+                    required
+                  />
+                  <Lock className="w-5 h-5 text-gray-400 absolute left-3 top-3.5" />
+                </div>
+              </div>
+              
+              <button 
+                type="submit"
+                className="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 transition-colors mt-2"
+              >
+                Access Account
+              </button>
+            </form>
           </div>
         ) : (
           <div className="animate-fade-in-up">

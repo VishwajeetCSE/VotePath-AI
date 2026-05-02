@@ -5,16 +5,12 @@ exports.submitFeedback = async (req, res, next) => {
   try {
     const { rating, comment } = req.body;
 
-    if (!req.user) {
-      return res.status(401).json({ success: false, message: 'Unauthorized. Please login with Google.' });
-    }
-
     // Sanitize the comment to prevent Cross-Site Scripting (XSS)
     const sanitizedComment = xss(comment);
 
     // Save to our Mock Firestore Database
     const result = await db.collection('feedback').add({
-      userId: req.user.id,
+      userId: 'anonymous',
       rating: parseInt(rating, 10),
       comment: sanitizedComment,
       timestamp: new Date().toISOString()

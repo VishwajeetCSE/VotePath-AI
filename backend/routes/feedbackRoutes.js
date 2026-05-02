@@ -25,7 +25,7 @@ const validateFeedbackInput = [
   }
 ];
 
-router.post('/', requireAuth, feedbackLimiter, validateFeedbackInput, feedbackController.submitFeedback);
+router.post('/', feedbackLimiter, validateFeedbackInput, feedbackController.submitFeedback);
 router.get('/', feedbackController.getFeedback);
 
 module.exports = router;

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, Bot, Map, BarChart3 } from "lucide-react";
+import { ArrowRight, Bot, Map, BarChart3, CheckCircle2 } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
@@ -51,6 +51,28 @@ export default function Landing() {
             <Bot className="w-5 h-5 mr-2 text-blue-500" />
             Ask the AI Assistant
           </Link>
+        </div>
+      </div>
+
+      {/* How it works */}
+      <div className="max-w-4xl w-full mb-24 animate-fade-in-up delay-100">
+        <h2 className="text-2xl font-bold text-center text-gray-900 dark:text-white mb-8">How it works</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 text-center">
+            <div className="w-12 h-12 bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 rounded-full flex items-center justify-center mx-auto mb-4 font-bold text-xl">1</div>
+            <h3 className="font-bold text-gray-900 dark:text-white mb-2">Cast Your Vote</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Securely verify your mobile number and participate in the live public poll.</p>
+          </div>
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 text-center">
+            <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center mx-auto mb-4 font-bold text-xl">2</div>
+            <h3 className="font-bold text-gray-900 dark:text-white mb-2">Get Insights</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400">View real-time, state-wise election statistics and AI-driven analysis.</p>
+          </div>
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 text-center">
+            <div className="w-12 h-12 bg-green-100 dark:bg-green-900/50 text-green-600 dark:text-green-400 rounded-full flex items-center justify-center mx-auto mb-4 font-bold text-xl">3</div>
+            <h3 className="font-bold text-gray-900 dark:text-white mb-2">Explore Guidance</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Ask the AI assistant for personalized help regarding your voting process.</p>
+          </div>
         </div>
       </div>
 

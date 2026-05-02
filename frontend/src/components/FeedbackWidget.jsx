@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
-import { Star, MessageSquare, Send, CheckCircle2, X, LogIn } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
-import { Link, useLocation } from 'react-router-dom';
+import { Star, MessageSquare, Send, CheckCircle2, X } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 
 export default function FeedbackWidget() {
   const [isOpen, setIsOpen] = useState(false);
@@ -11,21 +10,16 @@ export default function FeedbackWidget() {
   const [comment, setComment] = useState('');
   const [status, setStatus] = useState('idle'); // idle, loading, success, error
   
-  const { user } = useAuth();
   const location = useLocation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (rating === 0 || !comment.trim() || !user) return;
+    if (rating === 0 || !comment.trim()) return;
 
     setStatus('loading');
     try {
       const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8080";
-      await axios.post(`${apiUrl}/api/feedback`, { rating, comment }, {
-        headers: {
-          Authorization: `Bearer ${user.token}`
-        }
-      });
+      await axios.post(`${apiUrl}/api/feedback`, { rating, comment });
       setStatus('success');
       setTimeout(() => {
         setIsOpen(false);
@@ -116,26 +110,15 @@ export default function FeedbackWidget() {
               )}
 
               {/* Submit Button */}
-              {user ? (
-                <button
-                  type="submit"
-                  disabled={status === 'loading' || rating === 0 || !comment.trim()}
-                  className="w-full bg-indigo-600 text-white font-semibold py-3 rounded-xl hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-indigo-500 outline-none flex justify-center items-center gap-2"
-                >
-                  {status === 'loading' ? 'Sending...' : (
-                    <>Submit Feedback <Send className="w-4 h-4" /></>
-                  )}
-                </button>
-              ) : (
-                <Link
-                  to="/login"
-                  state={{ from: location }}
-                  className="w-full flex items-center justify-center gap-2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-bold py-3 rounded-xl hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
-                >
-                  <LogIn className="w-4 h-4" />
-                  Sign in to Feedback
-                </Link>
-              )}
+              <button
+                type="submit"
+                disabled={status === 'loading' || rating === 0 || !comment.trim()}
+                className="w-full bg-indigo-600 text-white font-semibold py-3 rounded-xl hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-indigo-500 outline-none flex justify-center items-center gap-2"
+              >
+                {status === 'loading' ? 'Sending...' : (
+                  <>Submit Feedback <Send className="w-4 h-4" /></>
+                )}
+              </button>
             </form>
           )}
         </div>

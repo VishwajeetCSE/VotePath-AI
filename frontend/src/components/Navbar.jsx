@@ -8,21 +8,23 @@ export default function Navbar({ darkMode, setDarkMode }) {
   const { user, logout } = useAuth();
 
   const isActive = (path) => {
-    return location.pathname === path ? "text-blue-500 font-semibold" : "text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400";
+    return location.pathname === path 
+      ? "bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 font-bold shadow-sm" 
+      : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white font-medium";
   };
 
   return (
-    <nav className="sticky top-0 z-50 flex items-center justify-between p-4 bg-white dark:bg-gray-800 shadow-sm transition-colors duration-200">
+    <nav className="sticky top-0 z-50 flex items-center justify-between p-4 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200/50 dark:border-gray-700/50 transition-colors duration-200">
       <Link to="/" className="flex items-center gap-2 text-xl font-bold text-gray-900 dark:text-white" aria-label="VotePath AI Home">
         <Vote className="text-blue-600 dark:text-blue-400" aria-hidden="true" />
         VotePath AI
       </Link>
-      <div className="hidden md:flex items-center space-x-6" role="navigation" aria-label="Main Navigation">
-        <Link to="/" className={`transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 rounded px-1 ${isActive('/')}`}>Home</Link>
-        <Link to="/journey" className={`transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 rounded px-1 ${isActive('/journey')}`}>Journey</Link>
-        <Link to="/assistant" className={`transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 rounded px-1 ${isActive('/assistant')}`}>Assistant</Link>
-        <Link to="/dashboard" className={`transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 rounded px-1 ${isActive('/dashboard')}`}>Dashboard</Link>
-        <Link to="/poll" className={`transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 rounded px-1 ${isActive('/poll')}`}>Poll</Link>
+      <div className="hidden md:flex items-center space-x-2 bg-gray-50 dark:bg-gray-800/50 p-1 rounded-2xl border border-gray-200 dark:border-gray-700" role="navigation" aria-label="Main Navigation">
+        <Link to="/" className={`px-4 py-2 rounded-xl transition-all duration-300 focus-visible:ring-2 focus-visible:ring-indigo-500 outline-none ${isActive('/')}`}>Home</Link>
+        <Link to="/journey" className={`px-4 py-2 rounded-xl transition-all duration-300 focus-visible:ring-2 focus-visible:ring-indigo-500 outline-none ${isActive('/journey')}`}>Journey</Link>
+        <Link to="/assistant" className={`px-4 py-2 rounded-xl transition-all duration-300 focus-visible:ring-2 focus-visible:ring-indigo-500 outline-none ${isActive('/assistant')}`}>Assistant</Link>
+        <Link to="/dashboard" className={`px-4 py-2 rounded-xl transition-all duration-300 focus-visible:ring-2 focus-visible:ring-indigo-500 outline-none ${isActive('/dashboard')}`}>Dashboard</Link>
+        <Link to="/poll" className={`px-4 py-2 rounded-xl transition-all duration-300 focus-visible:ring-2 focus-visible:ring-indigo-500 outline-none ${isActive('/poll')}`}>Poll</Link>
       </div>
       <div className="flex items-center gap-4">
         {user ? (
