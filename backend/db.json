@@ -1,0 +1,62 @@
+{
+  "feedback": [],
+  "votes": [],
+  "users": [],
+  "candidates": [
+    {
+      "id": "1",
+      "name": "Narendra Modi",
+      "party": "BJP",
+      "region": "Varanasi",
+      "description": "Incumbent Prime Minister of India."
+    },
+    {
+      "id": "2",
+      "name": "Rahul Gandhi",
+      "party": "INC",
+      "region": "Wayanad",
+      "description": "Leader of the Indian National Congress."
+    },
+    {
+      "id": "3",
+      "name": "Arvind Kejriwal",
+      "party": "AAP",
+      "region": "New Delhi",
+      "description": "Chief Minister of Delhi and AAP convener."
+    },
+    {
+      "id": "4",
+      "name": "Mamata Banerjee",
+      "party": "TMC",
+      "region": "West Bengal",
+      "description": "Chief Minister of West Bengal and TMC founder."
+    }
+  ],
+  "parties": [
+    {
+      "id": "bjp",
+      "name": "Bharatiya Janata Party (BJP)",
+      "votes": 0
+    },
+    {
+      "id": "inc",
+      "name": "Indian National Congress (INC)",
+      "votes": 0
+    },
+    {
+      "id": "aap",
+      "name": "Aam Aadmi Party (AAP)",
+      "votes": 0
+    },
+    {
+      "id": "tmc",
+      "name": "Trinamool Congress (TMC)",
+      "votes": 0
+    },
+    {
+      "id": "other",
+      "name": "Other / Independent",
+      "votes": 0
+    }
+  ]
+}

@@ -35,6 +35,9 @@ app.use('/chat', limiter);
 
 // Routes
 app.use("/chat", chatRoutes);
+app.use("/api/polls", require("./routes/pollRoutes"));
+app.use("/api/feedback", require("./routes/feedbackRoutes"));
+app.use("/api/auth", require("./routes/authRoutes"));
 
 // Health check
 app.get("/", (req, res) => {
