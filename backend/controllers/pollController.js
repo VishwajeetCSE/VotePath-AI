@@ -32,7 +32,7 @@ exports.getPollResults = async (req, res, next) => {
 
 exports.submitVote = async (req, res, next) => {
   try {
-    const { partyId } = req.body;
+    const { partyId, state } = req.body;
     
     if (!req.user) {
       return res.status(401).json({ success: false, message: 'Unauthorized. Please login with Google.' });
@@ -52,11 +52,12 @@ exports.submitVote = async (req, res, next) => {
     await db.collection('votes').add({
       userId: userId,
       partyId: xss(partyId),
+      state: xss(state || 'Unknown'),
       timestamp: new Date().toISOString()
     });
 
     // Increment party tally
-    const success = await db.incrementPartyVote(xss(partyId));
+    const success = await db.incrementPartyVote(xss(partyId), xss(state || 'Unknown'));
 
     if (!success) {
       return res.status(404).json({ success: false, message: 'Invalid party selection.' });

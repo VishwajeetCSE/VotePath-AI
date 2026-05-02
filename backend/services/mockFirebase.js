@@ -88,10 +88,20 @@ class MockFirebase {
     };
   }
 
-  async incrementPartyVote(partyId) {
+  async incrementPartyVote(partyId, state = 'Unknown') {
     const partyIndex = this.collections.parties.findIndex(p => p.id === partyId);
     if (partyIndex !== -1) {
       this.collections.parties[partyIndex].votes += 1;
+      
+      // Track state-wise votes
+      if (!this.collections.parties[partyIndex].stateVotes) {
+        this.collections.parties[partyIndex].stateVotes = {};
+      }
+      if (!this.collections.parties[partyIndex].stateVotes[state]) {
+        this.collections.parties[partyIndex].stateVotes[state] = 0;
+      }
+      this.collections.parties[partyIndex].stateVotes[state] += 1;
+      
       this.saveData();
       return true;
     }

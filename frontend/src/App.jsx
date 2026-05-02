@@ -26,7 +26,10 @@ const LoadingFallback = () => (
 );
 
 export default function App() {
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(() => {
+    const hour = new Date().getHours();
+    return hour < 6 || hour >= 18; // Dark mode from 6 PM to 6 AM
+  });
 
   useEffect(() => {
     if (darkMode) {
@@ -38,7 +41,7 @@ export default function App() {
 
   return (
     // NOTE: In production, replace with your actual Google Client ID from the Developer Console
-    <GoogleOAuthProvider clientId="YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com">
+    <GoogleOAuthProvider clientId="735516657120-hq17u5o65rvd30udrc5hqc5755ch68t2.apps.googleusercontent.com">
       <AuthProvider>
         <Router>
           <div className="min-h-screen flex flex-col bg-white dark:bg-gray-900 transition-colors duration-200">

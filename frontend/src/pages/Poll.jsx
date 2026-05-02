@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import axios from 'axios';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import { Info, AlertTriangle, TrendingUp, LogIn } from 'lucide-react';
+import { Info, AlertTriangle, TrendingUp, LogIn, MapPin } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { Link, useLocation } from 'react-router-dom';
 
@@ -9,6 +9,14 @@ export default function Poll() {
   const [standings, setStandings] = useState([]);
   const [totalVotes, setTotalVotes] = useState(0);
   const [selectedParty, setSelectedParty] = useState('');
+  const [selectedState, setSelectedState] = useState('');
+  
+  const INDIAN_STATES = [
+    "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", "Gujarat", "Haryana", 
+    "Himachal Pradesh", "Jharkhand", "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur", 
+    "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu", 
+    "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal", "Delhi"
+  ];
   const [status, setStatus] = useState('idle'); // idle, loading, success, error
   const [message, setMessage] = useState('');
   
@@ -45,6 +53,7 @@ export default function Poll() {
       const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8080";
       const res = await axios.post(`${apiUrl}/api/polls/vote`, {
         partyId: selectedParty,
+        state: selectedState || 'Unknown',
       }, {
         headers: {
           Authorization: `Bearer ${user.token}`
@@ -69,6 +78,31 @@ export default function Poll() {
       percentage: party.percentage,
       fill: party.id === 'bjp' ? '#F97316' : party.id === 'inc' ? '#06B6D4' : party.id === 'aap' ? '#10B981' : '#6366F1'
     }));
+  }, [standings]);
+
+  // Compute state-wise leaders
+  const stateLeaders = useMemo(() => {
+    const stateMap = {};
+    
+    standings.forEach(party => {
+      if (party.stateVotes) {
+        Object.entries(party.stateVotes).forEach(([state, votes]) => {
+          if (!stateMap[state] || votes > stateMap[state].votes) {
+            stateMap[state] = { 
+              partyName: party.name.split(' (')[0],
+              partyFullName: party.name,
+              votes: votes,
+              fill: party.id === 'bjp' ? '#F97316' : party.id === 'inc' ? '#06B6D4' : party.id === 'aap' ? '#10B981' : '#6366F1'
+            };
+          }
+        });
+      }
+    });
+    
+    return Object.entries(stateMap).map(([state, data]) => ({
+      state,
+      ...data
+    })).sort((a, b) => b.votes - a.votes);
   }, [standings]);
 
   const CustomTooltip = ({ active, payload }) => {
@@ -110,6 +144,23 @@ export default function Poll() {
             </div>
           ) : (
             <form onSubmit={handleVote} className="space-y-4">
+              <div className="space-y-4 mb-6">
+                <div className="relative">
+                  <MapPin className="absolute left-3 top-3.5 w-5 h-5 text-gray-400" />
+                  <select
+                    value={selectedState}
+                    onChange={(e) => setSelectedState(e.target.value)}
+                    className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none appearance-none cursor-pointer"
+                    required
+                  >
+                    <option value="" disabled>Select your state...</option>
+                    {INDIAN_STATES.map(st => (
+                      <option key={st} value={st}>{st}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
               <div role="radiogroup" aria-labelledby="poll-question" className="space-y-3">
                 <p id="poll-question" className="sr-only">Select a political party</p>
                 {standings.map((party) => (
@@ -145,7 +196,7 @@ export default function Poll() {
               {user ? (
                 <button
                   type="submit"
-                  disabled={!selectedParty || status === 'loading'}
+                  disabled={!selectedParty || !selectedState || status === 'loading'}
                   className="w-full bg-indigo-600 text-white font-bold py-4 rounded-xl hover:bg-indigo-700 transition-colors focus-visible:ring-4 focus-visible:ring-indigo-300 outline-none disabled:opacity-50 disabled:cursor-not-allowed mt-4"
                 >
                   {status === 'loading' ? 'Submitting securely...' : 'Submit Secure Vote'}
@@ -179,13 +230,13 @@ export default function Poll() {
           </div>
 
           <div className="flex-grow min-h-[300px]" aria-label="Bar chart showing live poll results">
-            {totalVotes === 0 ? (
-              <div className="h-full flex items-center justify-center text-gray-400">
-                <p>No votes cast yet. Be the first!</p>
-              </div>
-            ) : (
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={chartData} margin={{ top: 20, right: 0, left: -20, bottom: 0 }}>
+                  <defs>
+                    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                      <feDropShadow dx="0" dy="6" stdDeviation="6" floodColor="#000" floodOpacity="0.25" />
+                    </filter>
+                  </defs>
                   <XAxis 
                     dataKey="name" 
                     tick={{ fill: '#6B7280', fontSize: 12 }}
@@ -198,17 +249,38 @@ export default function Poll() {
                   <Tooltip content={<CustomTooltip />} cursor={{ fill: 'transparent' }} />
                   <Bar 
                     dataKey="votes" 
-                    radius={[6, 6, 0, 0]}
+                    radius={[8, 8, 0, 0]}
                     animationDuration={1500}
+                    minPointSize={15}
                   >
                     {chartData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.fill} />
+                      <Cell key={`cell-${index}`} fill={entry.fill} filter="url(#shadow)" />
                     ))}
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
-            )}
           </div>
+            {/* State-wise Breakdown */}
+            {stateLeaders.length > 0 && (
+              <div className="mt-8 border-t border-gray-100 dark:border-gray-700 pt-6">
+                <h3 className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4">
+                  Leading Party by State
+                </h3>
+                <div className="grid grid-cols-2 gap-3 max-h-48 overflow-y-auto pr-2 custom-scrollbar">
+                  {stateLeaders.map((item) => (
+                    <div key={item.state} className="flex flex-col p-3 rounded-lg bg-gray-50 dark:bg-gray-700/30 border border-gray-100 dark:border-gray-700">
+                      <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1">{item.state}</span>
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: item.fill }}></div>
+                        <span className="font-bold text-gray-900 dark:text-white text-sm truncate" title={item.partyFullName}>
+                          {item.partyName}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
         </section>
 
       </div>

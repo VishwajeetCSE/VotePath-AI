@@ -12,7 +12,12 @@ const app = express();
 app.use(helmet());
 
 // Security: CORS Restrictions
-const allowedOrigins = ['http://localhost:5173', 'http://localhost:3000', process.env.FRONTEND_URL];
+const allowedOrigins = [
+  'http://localhost:5173', 
+  'http://localhost:3000', 
+  'https://votepath-frontend-224296733729.us-central1.run.app',
+  process.env.FRONTEND_URL
+];
 app.use(cors({
   origin: function(origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {

@@ -1,10 +1,32 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, Bot, Map } from "lucide-react";
+import { ArrowRight, Bot, Map, BarChart3 } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 export default function Landing() {
+  const [leadingParty, setLeadingParty] = useState(null);
+  const [totalVotes, setTotalVotes] = useState(0);
+
+  useEffect(() => {
+    const fetchSummary = async () => {
+      try {
+        const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8080";
+        const res = await axios.get(`${apiUrl}/api/polls/standings`);
+        if (res.data.success && res.data.data.parties.length > 0) {
+          setLeadingParty(res.data.data.parties[0]);
+          setTotalVotes(res.data.data.totalVotes);
+        }
+      } catch (err) {
+        console.error("Failed to load poll summary");
+      }
+    };
+    fetchSummary();
+  }, []);
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-73px)] text-center px-4">
-      <div className="max-w-3xl space-y-8 animate-fade-in-up">
+    <div className="flex flex-col items-center justify-start min-h-[calc(100vh-73px)] px-4 pt-16 pb-24">
+      {/* Hero Section */}
+      <div className="max-w-3xl space-y-8 animate-fade-in-up text-center mb-24">
         <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight text-gray-900 dark:text-white">
           Your Smart <span className="text-blue-600 dark:text-blue-400">Election Assistant</span>
         </h1>
@@ -31,6 +53,45 @@ export default function Landing() {
           </Link>
         </div>
       </div>
+
+      {/* Live Poll Summary Widget */}
+      {leadingParty && totalVotes > 0 && (
+        <div className="w-full max-w-4xl bg-white dark:bg-gray-800 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-700 p-8 md:p-10 animate-fade-in-up transition-colors duration-200">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+            <div className="text-center md:text-left flex-1">
+              <div className="flex items-center justify-center md:justify-start gap-2 text-indigo-600 dark:text-indigo-400 font-bold mb-3 uppercase tracking-wide text-sm">
+                <BarChart3 className="w-5 h-5" />
+                Live Election Poll
+              </div>
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                Current Leader: {leadingParty.name.split(' (')[0]}
+              </h2>
+              <p className="text-gray-500 dark:text-gray-400 font-medium">
+                Based on {totalVotes.toLocaleString()} real user votes nationwide.
+              </p>
+            </div>
+            
+            <div className="bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 min-w-[180px] text-center border border-gray-100 dark:border-gray-600">
+              <p className="text-4xl font-extrabold text-indigo-600 dark:text-indigo-400 mb-1">
+                {leadingParty.percentage}%
+              </p>
+              <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                of total vote
+              </p>
+            </div>
+            
+            <div className="w-full md:w-auto flex justify-center">
+              <Link 
+                to="/poll"
+                className="flex items-center gap-2 px-6 py-4 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 font-bold rounded-xl hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors w-full md:w-auto justify-center"
+              >
+                View State-wise Data
+                <ArrowRight className="w-5 h-5" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
